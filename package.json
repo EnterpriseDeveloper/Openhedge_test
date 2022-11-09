@@ -1,0 +1,23 @@
+{
+  "name": "openhedgetesttask",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "deploy:ropsten": "truffle migrate --network ropsten --reset -all",
+    "gen:ropsten-key": "node ./scripts/genKey.js ropsten",
+    "test": "truffle test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.0",
+    "@truffle/hdwallet-provider": "^2.0.0",
+    "bip39": "^3.0.4",
+    "ethereumjs-wallet": "^1.0.2",
+    "web3": "^1.7.0"
+  }
+}
