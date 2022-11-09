@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract NFTCollection is ERC721URIStorage {
 
     /*   
-     * @notice These are parameters for NFT that will generate unique NFT from tokenID. Stored in the param array by index.
+     * @notice These are parameters for NFT that will generate unique NFT from tokenID. Stored in the parameters array by index.
      * BackgroundColor: from 0 to 60
      * BackgroundEffect: from 0 to 60
      * Wings: from 0 to 10
@@ -17,12 +17,12 @@ contract NFTCollection is ERC721URIStorage {
      * Body: from 0 to 100
      * Mouth: from 0 to 50
      * Eyes: from 0 to 60
-     * Hat:from 0 to 100
+     * Hat: from 0 to 100
      * Pet: from 0 to 10
      * Accessory: from 0 to 25
      * Border: from 0 to 30
     */
-    uint8[] param = [60, 60, 10, 40, 10, 100, 50, 60, 100, 10, 25, 30];
+    uint8[] parameters = [60, 60, 10, 40, 10, 100, 50, 60, 100, 10, 25, 30];
 
     address public owner;
     bool public initialization = false;
@@ -48,21 +48,25 @@ contract NFTCollection is ERC721URIStorage {
         for (uint16 i = 0; i < maxSupply; i++) {
             uint256 newItemId = _tokenIds.current(); // get the tokenId
             _safeMint(msg.sender, newItemId); // mint the nft from the sender account
-            _setTokenURI(newItemId, string(bytes.concat(bytes("https://someWebpage.com/"), bytes(Strings.toString(newItemId))))); // add the contents to the nft
+          //  _setTokenURI(newItemId, string(bytes.concat(bytes("https://someWebpage.com/"), bytes(Strings.toString(newItemId))))); // add the contents to the nft
             _tokenIds.increment(); // increment the token
         }
         initialization = true;
     }
 
     function getOptcode(uint256 tokenId) public view returns(string memory) {
-        uint[] memory parameters = new uint[](param.length);
-        for(uint16 i = 0; i < param.length; i++) {
-            uint x = uint(keccak256(abi.encodePacked(tokenId, msg.sender, tokenId))) % param[i];
-            parameters[i] = x;
-        }
-        string memory output="";
+        uint[] memory optcode = new uint[](parameters.length);
         for(uint16 i = 0; i < parameters.length; i++) {
-            output = string(abi.encodePacked(output, parameters[i]));
+            uint x = uint(keccak256(abi.encodePacked(tokenId, parameters[i]))) % parameters[i];
+            optcode[i] = x;
+        }
+        string memory output = "";
+        for(uint16 i = 0; i < optcode.length; i++) {
+            string memory character = "";
+            if(i != 0){
+                character = ",";
+            }
+            output = string(abi.encodePacked(output, character, Strings.toString(optcode[i])));
         }
         return string(abi.encodePacked("[", output, "]"));
     }
