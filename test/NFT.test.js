@@ -9,4 +9,14 @@ contract("NFTCollection", (accounts) => {
   beforeEach(async () => {
     contract = await NFTCollection.deployed();
   });
+
+  it("Should have an address for contract", () => {
+    assert(contract.address);
+  });
+
+  it("Stake token from last user", async () => {
+    let tokenId = 4
+    let data = await contract.getOptcode(tokenId);
+    console.log(data.toString());
+  });
 });

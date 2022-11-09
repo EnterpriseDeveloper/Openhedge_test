@@ -48,7 +48,7 @@ contract NFTCollection is ERC721URIStorage {
         for (uint16 i = 0; i < maxSupply; i++) {
             uint256 newItemId = _tokenIds.current(); // get the tokenId
             _safeMint(msg.sender, newItemId); // mint the nft from the sender account
-            _setTokenURI(newItemId, string.concat("https://someWebpage.com/", Strings.toString(newItemId))); // add the contents to the nft
+            _setTokenURI(newItemId, string(bytes.concat(bytes("https://someWebpage.com/"), bytes(Strings.toString(newItemId))))); // add the contents to the nft
             _tokenIds.increment(); // increment the token
         }
         initialization = true;
@@ -64,6 +64,6 @@ contract NFTCollection is ERC721URIStorage {
         for(uint16 i = 0; i < parameters.length; i++) {
             output = string(abi.encodePacked(output, parameters[i]));
         }
-        return output;
+        return string(abi.encodePacked("[", output, "]"));
     }
 }
