@@ -1,4 +1,4 @@
-# Test task for Wisdomise startup
+# Test task for Openhedge company
 ## Before initalizating project be shure that you have node v14.18.2 and npm 6.14.15
 
 ## Installation and deploying
