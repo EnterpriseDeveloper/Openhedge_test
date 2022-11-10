@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract NFTCollection is ERC1155 {
 
     /*   
-     * @notice These are parameters for NFT that will generate unique NFT from tokenID. Stored in the parameters array by index.
+     * @notice These are parameters for NFT that will generate unique genome from tokenID. Stored in the parameters array by index.
      * BackgroundColor: from 0 to 60
      * BackgroundEffect: from 0 to 60
      * Wings: from 0 to 10
@@ -45,17 +45,13 @@ contract NFTCollection is ERC1155 {
         initialization = true;
     }
 
+    // for external usage
     function getGenomes(uint256 tokenId) public view returns(string memory) {
         // check if id exist
         require(tokenId <= maxSupply, "out of range");
         
-        uint[] memory genomes = new uint[](parameters.length);
-        // Generate random genomes from parameters
-        for(uint16 i = 0; i < parameters.length; i++) {
-            uint x = uint(keccak256(abi.encodePacked(tokenId, parameters[i]))) % parameters[i];
-            genomes[i] = x;
-        }
-        // Generate string from genomes to return from function
+        uint[] memory genomes = getGenomesInternal(tokenId);
+        // Generate string from genomes to return from function then we can parse this string like array in JS side
         string memory output = "";
         for(uint16 i = 0; i < genomes.length; i++) {
             string memory character = "";
@@ -65,5 +61,16 @@ contract NFTCollection is ERC1155 {
             output = string(abi.encodePacked(output, character, Strings.toString(genomes[i])));
         }
         return string(abi.encodePacked("[", output, "]"));
+    }
+
+    // for internal usage
+    function getGenomesInternal (uint256 tokenId) private view returns(uint[] memory) {
+        uint[] memory genomes = new uint[](parameters.length);
+        // Generate random genomes from parameters
+        for(uint16 i = 0; i < parameters.length; i++) {
+            uint x = uint(keccak256(abi.encodePacked(tokenId, parameters[i]))) % parameters[i];
+            genomes[i] = x;
+        }
+        return genomes;
     }
 }
