@@ -25,19 +25,19 @@ contract("NFTCollection", (accounts) => {
 
   it("Get first otpcode", async () => {
     let tokenId = 25;
-    let data = await contract.getOptcode(tokenId);
+    let data = await contract.getGenomes(tokenId);
     assert.equal(data.toString(), testOne);
   });
 
   it("Get second otpcode", async () => {
     let tokenId = 30;
-    let data = await contract.getOptcode(tokenId);
+    let data = await contract.getGenomes(tokenId);
     assert.equal(data.toString(), testTwo);
   });
 
   it("Get third otpcode", async () => {
     let tokenId = 40;
-    let data = await contract.getOptcode(tokenId);
+    let data = await contract.getGenomes(tokenId);
     assert.equal(data.toString(), testThree);
   });
 });

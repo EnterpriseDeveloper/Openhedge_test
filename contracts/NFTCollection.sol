@@ -2,10 +2,10 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 // get the OpenZeppelin Contracts for NFT collection
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract NFTCollection is ERC721URIStorage {
+contract NFTCollection is ERC1155 {
 
     /*   
      * @notice These are parameters for NFT that will generate unique NFT from tokenID. Stored in the parameters array by index.
@@ -26,14 +26,11 @@ contract NFTCollection is ERC721URIStorage {
 
     address public owner;
     bool public initialization = false;
-    
-    // keep count of the tokenId
-    using Counters for Counters.Counter; // keep track of the token id's
-    Counters.Counter private _tokenIds;
 
     uint16 public constant maxSupply = 5000; // set the max supply of NFT's for your collection
+    uint256 public constant TOKEN = 0;
 
-    constructor() ERC721("openhedge", "OPE") {
+    constructor() ERC1155("https://some.game/api/item/{id}.json"){
         owner = msg.sender;
     }
 
@@ -44,29 +41,28 @@ contract NFTCollection is ERC721URIStorage {
 
     function createOpenhedgeNFT() public onlyOwner {
         require(!initialization); // check if NFT already initialized
-        //function to create nfts
-        for (uint16 i = 0; i < maxSupply; i++) {
-            uint256 newItemId = _tokenIds.current(); // get the tokenId
-            _safeMint(msg.sender, newItemId); // mint the nft from the sender account
-          //  _setTokenURI(newItemId, string(bytes.concat(bytes("https://someWebpage.com/"), bytes(Strings.toString(newItemId))))); // add the contents to the nft
-            _tokenIds.increment(); // increment the token
-        }
+       _mint(msg.sender, TOKEN, maxSupply, "");
         initialization = true;
     }
 
-    function getOptcode(uint256 tokenId) public view returns(string memory) {
-        uint[] memory optcode = new uint[](parameters.length);
+    function getGenomes(uint256 tokenId) public view returns(string memory) {
+        // check if id exist
+        require(tokenId <= maxSupply, "out of range");
+        
+        uint[] memory genomes = new uint[](parameters.length);
+        // Generate random genomes from parameters
         for(uint16 i = 0; i < parameters.length; i++) {
             uint x = uint(keccak256(abi.encodePacked(tokenId, parameters[i]))) % parameters[i];
-            optcode[i] = x;
+            genomes[i] = x;
         }
+        // Generate string from genomes to return from function
         string memory output = "";
-        for(uint16 i = 0; i < optcode.length; i++) {
+        for(uint16 i = 0; i < genomes.length; i++) {
             string memory character = "";
             if(i != 0){
                 character = ",";
             }
-            output = string(abi.encodePacked(output, character, Strings.toString(optcode[i])));
+            output = string(abi.encodePacked(output, character, Strings.toString(genomes[i])));
         }
         return string(abi.encodePacked("[", output, "]"));
     }
